@@ -18,9 +18,9 @@ pip install setuptools_scm
 # set, this will attempt to Notarize the signed DMG
 TACO_INSTALLER_VERSION=$(python installer-version.py)
 
-if [ ! "$TACO_INSTALLER_VERSION" ]; then
+if [ ! "TACO_INSTALLER_VERSION" ]; then
 	echo "WARNING: No environment variable TACO_INSTALLER_VERSION set. Using 0.0.0."
-	FLAX_INSTALLER_VERSION="0.0.0"
+	TACO_INSTALLER_VERSION="0.0.0"
 fi
 echo "Taco Installer Version is: $TACO_INSTALLER_VERSION"
 

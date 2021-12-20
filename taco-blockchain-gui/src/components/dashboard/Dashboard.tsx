@@ -117,7 +117,6 @@ export default class Dashboard extends React.Component {
           <Flex flexGrow={1} />
           <LocaleToggle locales={locales} defaultLocale={defaultLocale} />
           <Alert style={{cursor:'pointer'}} severity={this.state.severity} onClick={this.updateClick}>{this.state.last_version}</Alert>
-          <DarkModeToggle />
         </Toolbar>
       </StyledAppBar>
       <StyledDrawer variant="permanent">
