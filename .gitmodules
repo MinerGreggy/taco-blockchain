@@ -1,6 +1,3 @@
 [submodule "mozilla-ca"]
 	path = mozilla-ca
 	url = https://github.com/Chia-Network/mozilla-ca/
-[submodule "taco-blockchain-gui"]
-	path = taco-blockchain-gui
-	url = https://github.com/dominick01234/taco-blockchain-gui
