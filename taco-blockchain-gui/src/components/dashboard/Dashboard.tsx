@@ -1,7 +1,9 @@
+import { shell } from 'electron';
 import React from 'react';
 import styled from 'styled-components';
 import { Route, Switch, useRouteMatch } from 'react-router';
 import { AppBar, Toolbar, Drawer, Divider } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import {
   DarkModeToggle,
   LocaleToggle,
@@ -21,6 +23,7 @@ import DashboardSideBar from './DashboardSideBar';
 import { DashboardTitleTarget } from './DashboardTitle';
 import TradeManager from '../trading/TradeManager';
 import BackupCreate from '../backup/BackupCreate';
+import { render } from 'react-dom';
 
 const StyledRoot = styled(Flex)`
   height: 100%;
@@ -58,9 +61,53 @@ const StyledBrandWrapper = styled(Flex)`
   // border-right: 1px solid rgba(0, 0, 0, 0.12);
 `;
 
-export default function Dashboard() {
-  const { path } = useRouteMatch();
+const { path } = useRouteMatch();
+const https = require('https');
+const electron = require("electron");
+const app = electron.app || electron.remote.app;
+const version = app.getVersion();
 
+export default class Dashboard extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      severity: "info",
+      last_version: "Check..",
+      link: "No-link"
+    };
+  }
+
+  updateClick = (event) => {
+    if ( this.state.severity === 'warning') {
+      shell.openExternal("https://github.com/SkynetNetwork/skynet-blockchain/releases");
+    }
+  }
+
+  checkUpdate() {
+    console.log('AppVersion:',version);
+
+    https.get(
+      'https://skynet-network.org/last_update.json', (resp) =>{
+        let data = '';
+        resp.on('data', (chunk) =>{
+          data += chunk;
+        });
+        resp.on('end', () =>{
+          var respParsed = JSON.parse(data);
+          if (respParsed.version == version) {
+            this.setState({severity: 'info'});
+            this.setState({last_version: 'No updates available'});
+          } else {
+            this.setState({severity: 'warning'});
+            this.setState({last_version: 'Update available!'});
+          }
+        });
+      }).on("error", (err) => {
+        console.log("Error: " + err.message);
+      });
+  }
+  
+ render() {
   return (
     <StyledRoot>
       <BackupCreate />
@@ -69,6 +116,7 @@ export default function Dashboard() {
           <DashboardTitleTarget />
           <Flex flexGrow={1} />
           <LocaleToggle locales={locales} defaultLocale={defaultLocale} />
+          <Alert style={{cursor:'pointer'}} severity={this.state.severity} onClick={this.updateClick}>{this.state.last_version}</Alert>
           <DarkModeToggle />
         </Toolbar>
       </StyledAppBar>
@@ -109,5 +157,5 @@ export default function Dashboard() {
         </Switch>
       </StyledBody>
     </StyledRoot>
-  );
+  );}
 }
